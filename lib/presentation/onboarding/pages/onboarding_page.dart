@@ -40,9 +40,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       title: 'Connect and Explore Pet Services',
       description:
           'Find the right services, resources, and connections to make your pet\'s life better and easier.',
-      imagePath: 'assets/lotties/adoption_dog.json',
-      width: 350,
-      height: 350,
+      imagePath: 'assets/lotties/dog_floating.json',
+      width: 320,
+      height: 320,
       top: 300,
     ),
   ];
@@ -113,7 +113,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                       duration: const Duration(milliseconds: 300),
                       margin: const EdgeInsets.symmetric(horizontal: 4),
                       height: 8,
-                      width: _currentPage == index ? 24 : 8,
+                      width: 8,
                       decoration: BoxDecoration(
                         color: _currentPage == index
                             ? AppColors.primary

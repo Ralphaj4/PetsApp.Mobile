@@ -33,7 +33,6 @@ class OnboardingSlide extends StatelessWidget {
       height: double.infinity,
       child: Stack(
         children: [
-          // Title at top-left
           Positioned(
             top: 60,
             left: 24,
@@ -44,29 +43,21 @@ class OnboardingSlide extends StatelessWidget {
             ),
           ),
 
-          // Centered image
-          Positioned(
-            top: data.top,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Lottie.asset(
-                data.imagePath, // make sure this is a .json file in assets
-                width: data.width,
-                height: data.height,
-                fit: BoxFit.contain,
-              ),
+          Center(
+            child: Lottie.asset(
+              data.imagePath,
+              width: data.width,
+              height: data.height,
+              fit: BoxFit.contain,
             ),
           ),
 
-          // Description at bottom
           Positioned(
             left: 24,
             right: 24,
             bottom: 200,
             child: Text(
               data.description,
-              textAlign: TextAlign.center,
               style: const TextStyle(
                 color: AppColors.grey,
                 fontSize: 16,

@@ -9,21 +9,21 @@ class AuthState {
   final AuthStatus status;
   final AuthResponse? authResponse;
 
-  const AuthState._({
-    required this.status,
-    this.authResponse,
-  });
+  const AuthState._({required this.status, this.authResponse});
 
   const AuthState.unknown() : this._(status: AuthStatus.unknown);
   const AuthState.authenticated(AuthResponse? authResponse)
-      : this._(status: AuthStatus.authenticated, authResponse: authResponse);
-  const AuthState.unauthenticated() : this._(status: AuthStatus.unauthenticated);
+    : this._(status: AuthStatus.authenticated, authResponse: authResponse);
+  const AuthState.unauthenticated()
+    : this._(status: AuthStatus.unauthenticated);
 
   bool get isAuthenticated => status == AuthStatus.authenticated;
 }
 
 /// Global authentication state provider
-final authStateProvider = StateNotifierProvider<AuthStateNotifier, AuthState>((ref) {
+final authStateProvider = StateNotifierProvider<AuthStateNotifier, AuthState>((
+  ref,
+) {
   final tokenStorageService = ref.watch(tokenStorageServiceProvider);
   return AuthStateNotifier(tokenStorageService);
 });
@@ -31,7 +31,8 @@ final authStateProvider = StateNotifierProvider<AuthStateNotifier, AuthState>((r
 class AuthStateNotifier extends StateNotifier<AuthState> {
   final TokenStorageService _tokenStorageService;
 
-  AuthStateNotifier(this._tokenStorageService) : super(const AuthState.unknown()) {
+  AuthStateNotifier(this._tokenStorageService)
+    : super(const AuthState.unknown()) {
     _checkAuthStatus();
   }
 

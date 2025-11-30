@@ -13,39 +13,47 @@ class SplashPage extends ConsumerStatefulWidget {
 }
 
 class _SplashPageState extends ConsumerState<SplashPage> {
+  bool _canNavigate = false;
+
   @override
   void initState() {
     super.initState();
 
-    // Schedule a post-frame callback to check auth
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkAuthAndNavigate();
+    Future.delayed(const Duration(seconds: 2)).then((_) {
+      if (mounted) {
+        _canNavigate = true;
+        _checkAuthAndNavigate();
+      }
     });
   }
 
   Future<void> _checkAuthAndNavigate() async {
-    final authState = ref.read(authStateProvider);
-    final prefsAsync = await ref.read(sharedPreferencesProvider.future);
+    if (!mounted) return;
+
+    final prefs = await ref.read(sharedPreferencesProvider.future);
     final onboardingCompleted =
-        prefsAsync.getBool(AppConstants.onboardingCompletedKey) ?? false;
+        prefs.getBool(AppConstants.onboardingCompletedKey) ?? false;
 
     if (!mounted) return;
 
     if (!onboardingCompleted) {
-      context.go('/onboarding');
-    } else if (authState.isAuthenticated) {
+      context.pushReplacement('/onboarding');
+      return;
+    }
+
+    final auth = ref.read(authStateProvider);
+
+    if (auth.isAuthenticated) {
       context.go('/home');
-    } else if (authState.status == AuthStatus.unauthenticated) {
+    } else if (auth.status == AuthStatus.unauthenticated) {
       context.go('/login');
     }
-    // If status unknown, stay on splash
   }
 
   @override
   Widget build(BuildContext context) {
-    // You can still listen to auth changes if needed:
-    ref.listen<AuthState>(authStateProvider, (previous, next) {
-      if (!mounted) return;
+    ref.listen<AuthState>(authStateProvider, (prev, next) {
+      if (!_canNavigate || !mounted) return;
 
       if (next.isAuthenticated) {
         context.go('/home');
@@ -56,16 +64,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
 
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset('assets/images/code.png', width: 120, height: 120),
-            const SizedBox(height: 24),
-            const CircularProgressIndicator(),
-            const SizedBox(height: 16),
-            Text('Loading...', style: Theme.of(context).textTheme.bodyLarge),
-          ],
-        ),
+        child: Image.asset('assets/images/code.png', width: 120, height: 120),
       ),
     );
   }
