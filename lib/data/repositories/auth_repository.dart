@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import '../../core/exceptions/dio_exception_handler.dart';
 import '../../domain/repositories/auth_repository.dart' as abstract_repo;
 import '../models/auth_response.dart';
+import '../models/login_dto.dart';
 
 class AuthRepositoryImpl implements abstract_repo.AuthRepository {
   final Dio dio;
@@ -10,18 +12,48 @@ class AuthRepositoryImpl implements abstract_repo.AuthRepository {
 
   @override
   Future<AuthResponse> login({
-    required String email,
-    required String password,
+    required String mobileNumber,
+    String? otp,
   }) async {
     try {
-      final response = await dio.post(
-        '/auth/login',
-        data: {'email': email, 'password': password},
+      final loginDto = LoginDto(
+        mobileNumber: mobileNumber,
+        otp: otp ?? '',
       );
+
+      if (kDebugMode) {
+        debugPrint('🔵 Attempting login with: ${loginDto.toJson()}');
+      }
+
+      final response = await dio.post(
+        '/api/Auth/login',
+        data: loginDto.toJson(),
+      );
+
+      if (kDebugMode) {
+        debugPrint('🟢 Login response received: ${response.statusCode}');
+        debugPrint('Response data type: ${response.data.runtimeType}');
+        debugPrint('Response data: ${response.data}');
+      }
+
       return AuthResponse.fromJson(response.data);
     } on DioException catch (e) {
+      if (kDebugMode) {
+        debugPrint('🔴 DioException: ${e.type}');
+        debugPrint('Error: ${e.error}');
+        debugPrint('Response: ${e.response?.data}');
+      }
       final errorMessage = DioExceptionHandler.handleException(e);
       throw AppException(message: errorMessage, originalException: e);
+    } catch (e, stackTrace) {
+      if (kDebugMode) {
+        debugPrint('🔴 Unexpected error: $e');
+        debugPrint('Stack trace: $stackTrace');
+      }
+      throw AppException(
+        message: 'Unexpected error: ${e.toString()}',
+        originalException: e,
+      );
     }
   }
 
@@ -33,8 +65,8 @@ class AuthRepositoryImpl implements abstract_repo.AuthRepository {
   }) async {
     try {
       final response = await dio.post(
-        '/auth/register',
-        data: {'email': email, 'password': password, 'name': name},
+        '/api/Auth/register',
+        data: {'email': email, 'password': password, 'fullName': name},
       );
       return AuthResponse.fromJson(response.data);
     } on DioException catch (e) {
@@ -46,7 +78,7 @@ class AuthRepositoryImpl implements abstract_repo.AuthRepository {
   @override
   Future<void> logout() async {
     try {
-      await dio.post('/auth/logout');
+      await dio.post('/api/Auth/revoke');
     } on DioException catch (e) {
       final errorMessage = DioExceptionHandler.handleException(e);
       throw AppException(message: errorMessage, originalException: e);

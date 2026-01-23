@@ -1,3 +1,4 @@
+import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 import '../constants.dart';
 
 class Validators {
@@ -46,5 +47,30 @@ class Validators {
       return '$fieldName is required';
     }
     return null;
+  }
+
+  /// Validates phone number based on country code (ISO code)
+  static String? validatePhoneNumber(String? value, String countryCode) {
+    if (value == null || value.isEmpty) {
+      return 'Phone number is required';
+    }
+
+    try {
+      // Convert country code to IsoCode enum
+      final isoCode = IsoCode.values.firstWhere(
+        (code) => code.name == countryCode.toUpperCase(),
+        orElse: () => IsoCode.LB,
+      );
+
+      final parsedNumber = PhoneNumber.parse(value, callerCountry: isoCode);
+
+      if (!parsedNumber.isValid()) {
+        return 'Invalid phone number for $countryCode';
+      }
+
+      return null; // Valid
+    } catch (e) {
+      return 'Invalid phone number format';
+    }
   }
 }

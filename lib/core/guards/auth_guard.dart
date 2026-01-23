@@ -12,13 +12,13 @@ class AuthGuard {
   /// Get current user info if authenticated
   static String? getCurrentUserId(WidgetRef ref) {
     final authState = ref.read(authStateProvider);
-    return authState.authResponse?.user.id;
+    return authState.authResponse?.user?.id;
   }
 
   /// Get current user email if authenticated
   static String? getCurrentUserEmail(WidgetRef ref) {
     final authState = ref.read(authStateProvider);
-    return authState.authResponse?.user.email;
+    return authState.authResponse?.user?.email;
   }
 
   /// Watch authentication status (triggers rebuilds when auth state changes)

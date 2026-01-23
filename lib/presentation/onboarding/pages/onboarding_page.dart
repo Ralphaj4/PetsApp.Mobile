@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:petsapp_mobile/core/constants.dart';
 import 'package:petsapp_mobile/core/providers/shared_preferences_provider.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../presentation/widgets/bottom_action_button.dart';
 import '../widgets/onboarding_slide.dart';
 
 class OnboardingPage extends ConsumerStatefulWidget {
@@ -125,29 +126,11 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                 ),
                 const SizedBox(height: 24),
                 // Next/Get Started button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      minimumSize: Size(200, 60),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(32),
-                      ),
-                    ),
-                    onPressed: _nextPage,
-                    child: Text(
-                      _currentPage == slides.length - 1
-                          ? 'Get Started'
-                          : 'Next',
-                      style: const TextStyle(
-                        color: AppColors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
+                BottomActionButton(
+                  text: _currentPage == slides.length - 1
+                      ? 'Get Started'
+                      : 'Next',
+                  onPressed: _nextPage,
                 ),
               ],
             ),

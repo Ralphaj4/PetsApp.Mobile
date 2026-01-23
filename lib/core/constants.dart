@@ -1,8 +1,9 @@
 class AppConstants {
   // API endpoints
-  static const String baseUrl = 'http://10.0.2.2:3000';
-  // For Android emulator: 'http://10.0.2.2:3000'
-  // For real device: 'http://YOUR_MACHINE_IP:3000'
+  // static const String baseUrl = 'http://192.168.200.134:5075';
+  static const String baseUrl = 'http://192.168.0.109:5075';
+  // For Android emulator: 'https://10.0.2.2:7115'
+  // For real device: 'https://YOUR_MACHINE_IP:7115'
 
   // Validation
   static const int minPasswordLength = 8;

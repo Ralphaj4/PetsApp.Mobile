@@ -8,12 +8,12 @@ class LoginUsecase {
       : _authRepository = authRepository;
 
   Future<AuthResponse> call({
-    required String email,
-    required String password,
+    required String mobileNumber,
+    String? otp,
   }) async {
     return await _authRepository.login(
-      email: email,
-      password: password,
+      mobileNumber: mobileNumber,
+      otp: otp,
     );
   }
 }

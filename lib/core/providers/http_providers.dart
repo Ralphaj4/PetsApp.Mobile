@@ -126,7 +126,7 @@ class _ErrorInterceptor extends Interceptor {
 
       // Call refresh endpoint via dedicated Dio (no interceptors)
       final response = await _refreshDio.post(
-        '/auth/refresh',
+        '/api/Auth/refresh',
         data: {'refreshToken': refreshToken},
         options: Options(
           validateStatus: (status) => status != null && status < 500,
@@ -242,13 +242,31 @@ final dioProvider = Provider<Dio>((ref) {
       baseUrl: AppConstants.baseUrl,
       connectTimeout: const Duration(seconds: 15),
       receiveTimeout: const Duration(seconds: 15),
-      contentType: Headers.jsonContentType,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      responseType: ResponseType.json,
       validateStatus: (status) {
         // Accept all responses - error handling is in interceptor
         return true;
       },
     ),
   );
+
+  // Allow self-signed certificates in debug mode for development
+  // if (kDebugMode) {
+  //   (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+  //     final client = HttpClient();
+  //     client.badCertificateCallback = (cert, host, port) {
+  //       if (kDebugMode) {
+  //         debugPrint('🔓 Allowing self-signed certificate for $host:$port');
+  //       }
+  //       return true;
+  //     };
+  //     return client;
+  //   };
+  // }
 
   // Add interceptor that passes dio instance via extra
   dio.interceptors.add(

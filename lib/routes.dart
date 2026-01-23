@@ -4,6 +4,7 @@ import 'presentation/auth/pages/login_page.dart';
 import 'presentation/auth/pages/register_page.dart';
 import 'presentation/home/pages/home_page.dart';
 import 'presentation/onboarding/pages/onboarding_page.dart';
+import 'presentation/map/pages/map_page.dart';
 
 final goRouter = GoRouter(
   initialLocation: '/splash',
@@ -27,6 +28,10 @@ final goRouter = GoRouter(
     GoRoute(
       path: '/home',
       builder: (context, state) => const HomePage(),
+    ),
+    GoRoute(
+      path: '/map',
+      builder: (context, state) => const MapPage(),
     ),
   ],
 );

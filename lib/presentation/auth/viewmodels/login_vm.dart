@@ -36,10 +36,10 @@ class LoginViewModel extends StateNotifier<LoginState> {
 
   LoginViewModel(this._loginUsecase, this._ref) : super(LoginState());
 
-  Future<void> login({required String email, required String password}) async {
+  Future<void> login({required String mobileNumber, String? otp}) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final response = await _loginUsecase(email: email, password: password);
+      final response = await _loginUsecase(mobileNumber: mobileNumber, otp: otp);
       state = state.copyWith(isLoading: false, authResponse: response);
 
       // Update global auth state with token persistence
@@ -49,7 +49,7 @@ class LoginViewModel extends StateNotifier<LoginState> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        error: 'An unexpected error occurred',
+        error: 'An unexpected error occurred: ${e.toString()}',
       );
     }
   }

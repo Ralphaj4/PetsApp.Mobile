@@ -39,7 +39,7 @@ class OnboardingSlide extends StatelessWidget {
             right: 24,
             child: Text(
               data.title,
-              style: const TextStyle(fontSize: 48, fontWeight: FontWeight.w700),
+              style: const TextStyle(fontSize: 42, fontWeight: FontWeight.w700),
             ),
           ),
 

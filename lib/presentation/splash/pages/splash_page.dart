@@ -40,14 +40,15 @@ class _SplashPageState extends ConsumerState<SplashPage> {
       context.pushReplacement('/onboarding');
       return;
     }
+    context.go('/map');
+    return;
+    // final auth = ref.read(authStateProvider);
 
-    final auth = ref.read(authStateProvider);
-
-    if (auth.isAuthenticated) {
-      context.go('/home');
-    } else if (auth.status == AuthStatus.unauthenticated) {
-      context.go('/login');
-    }
+    // if (auth.isAuthenticated) {
+    //   context.go('/home');
+    // } else if (auth.status == AuthStatus.unauthenticated) {
+    //   context.go('/login');
+    // }
   }
 
   @override
@@ -64,7 +65,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
 
     return Scaffold(
       body: Center(
-        child: Image.asset('assets/images/code.png', width: 120, height: 120),
+        child: Image.asset('assets/images/logo.png', width: 120, height: 120),
       ),
     );
   }

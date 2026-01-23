@@ -2,8 +2,8 @@ import '../../data/models/auth_response.dart';
 
 abstract class AuthRepository {
   Future<AuthResponse> login({
-    required String email,
-    required String password,
+    required String mobileNumber,
+    String? otp,
   });
 
   Future<AuthResponse> register({
