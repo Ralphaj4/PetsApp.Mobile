@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:petsapp_mobile/presentation/auth/widgets/loading/paws_loading.dart';
 import 'package:petsapp_mobile/core/theme/app_colors.dart';
+import 'package:petsapp_mobile/core/providers/base_url_provider.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:petsapp_mobile/presentation/widgets/bottom_action_button.dart';
 import 'package:petsapp_mobile/core/utils/validators.dart';
@@ -17,6 +18,7 @@ class LoginPage extends ConsumerStatefulWidget {
 
 class _LoginPageState extends ConsumerState<LoginPage> {
   TextEditingController controllerPhone = TextEditingController();
+  TextEditingController controllerBaseUrl = TextEditingController();
   late Country selectedCountry;
   late FocusNode phoneFocusNode;
   bool _isPhoneFocused = false;
@@ -29,6 +31,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     phoneFocusNode = FocusNode();
     phoneFocusNode.addListener(_onPhoneFocusChange);
     controllerPhone.addListener(_validatePhone);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controllerBaseUrl.text = ref.read(baseUrlProvider);
+    });
   }
 
   void _onPhoneFocusChange() {
@@ -58,9 +64,24 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         );
   }
 
+  void _saveBaseUrl() {
+    final url = controllerBaseUrl.text.trim();
+    if (url.isNotEmpty) {
+      ref.read(baseUrlProvider.notifier).setBaseUrl(url);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Server URL saved'),
+          backgroundColor: AppColors.success,
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
   @override
   void dispose() {
     controllerPhone.dispose();
+    controllerBaseUrl.dispose();
     phoneFocusNode.removeListener(_onPhoneFocusChange);
     phoneFocusNode.dispose();
     super.dispose();
@@ -254,10 +275,64 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  if (loginState.isLoading)
-                    const PawsLoading()
-                  else
-                    const SizedBox.shrink(),
+                  // Base URL input
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        TextField(
+                          controller: controllerBaseUrl,
+                          decoration: InputDecoration(
+                            labelText: 'Server URL',
+                            hintText: 'http://192.168.0.1:5075',
+                            hintStyle: const TextStyle(color: AppColors.grey),
+                            labelStyle: const TextStyle(color: AppColors.grey),
+                            prefixIcon: const Icon(Icons.dns_outlined, color: AppColors.grey),
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.save_outlined, color: AppColors.primary),
+                              onPressed: _saveBaseUrl,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: const BorderSide(color: AppColors.grey),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: const BorderSide(color: AppColors.grey),
+                            ),
+                          ),
+                          keyboardType: TextInputType.url,
+                          onSubmitted: (_) => _saveBaseUrl(),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Saved: ${ref.watch(baseUrlProvider)}',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  if (loginState.isLoading) ...[
+                    const PawsLoading(),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Calling: ${ref.watch(baseUrlProvider)}/api/Auth/start',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.grey,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ],
               ),
             ),

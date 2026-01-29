@@ -2,10 +2,10 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:dio/dio.dart';
-import '../constants.dart';
 import '../exceptions/dio_exception_handler.dart';
 import '../services/token_storage_service.dart';
 import '../../presentation/auth/providers/auth_state_provider.dart';
+import 'base_url_provider.dart';
 
 /// Request interceptor that adds Authorization header with access token
 class _AuthorizationInterceptor extends Interceptor {
@@ -42,9 +42,10 @@ class _ErrorInterceptor extends Interceptor {
   late final Dio _refreshDio;
 
   _ErrorInterceptor(this._tokenStorageService, this._ref) {
+    final baseUrl = _ref.read(baseUrlProvider);
     _refreshDio = Dio(
       BaseOptions(
-        baseUrl: AppConstants.baseUrl,
+        baseUrl: baseUrl,
         connectTimeout: const Duration(seconds: 10),
       ),
     );
@@ -63,9 +64,10 @@ class _ErrorInterceptor extends Interceptor {
         final retryOptions = err.requestOptions;
         retryOptions.headers['Authorization'] = 'Bearer $newAccessToken';
 
+        final baseUrl = _ref.read(baseUrlProvider);
         final dio =
             (retryOptions.extra['_dio'] as Dio?) ??
-            Dio(BaseOptions(baseUrl: AppConstants.baseUrl));
+            Dio(BaseOptions(baseUrl: baseUrl));
 
         final retryResponse = await dio.request<dynamic>(
           err.requestOptions.path,
@@ -236,10 +238,11 @@ final tokenStorageServiceProvider = Provider<TokenStorageService>((ref) {
 /// Provider for Dio HTTP client with all interceptors configured
 final dioProvider = Provider<Dio>((ref) {
   final tokenStorageService = ref.watch(tokenStorageServiceProvider);
+  final baseUrl = ref.watch(baseUrlProvider);
 
   final dio = Dio(
     BaseOptions(
-      baseUrl: AppConstants.baseUrl,
+      baseUrl: baseUrl,
       connectTimeout: const Duration(seconds: 15),
       receiveTimeout: const Duration(seconds: 15),
       headers: {

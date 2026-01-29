@@ -16,17 +16,14 @@ class AuthRepositoryImpl implements abstract_repo.AuthRepository {
     String? otp,
   }) async {
     try {
-      final loginDto = LoginDto(
-        mobileNumber: mobileNumber,
-        otp: otp ?? '',
-      );
+      final loginDto = LoginDto(mobileNumber: mobileNumber, otp: otp ?? '');
 
       if (kDebugMode) {
         debugPrint('🔵 Attempting login with: ${loginDto.toJson()}');
       }
 
       final response = await dio.post(
-        '/api/Auth/login',
+        '/api/Auth/start',
         data: loginDto.toJson(),
       );
 

@@ -40,7 +40,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
       context.pushReplacement('/onboarding');
       return;
     }
-    context.go('/map');
+    context.go('/home');
     return;
     // final auth = ref.read(authStateProvider);
 
